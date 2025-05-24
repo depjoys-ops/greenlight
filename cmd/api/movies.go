@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,7 +10,41 @@ import (
 )
 
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "create a new movie")
+
+	/*	1) First way
+		json.Unmarshal() requires more memory (B/op) than json.Decoder, as well as being a tiny bit slower
+
+		var input struct {
+			Foo string `json:"foo"`
+		}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+		err = json.Unmarshal(body, &input)
+		if err != nil {
+			app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+			return
+		}
+		fmt.Fprintf(w, "%+v\n", input)
+	*/
+
+	// 2) Second way
+	var input struct {
+		Title   string   `json:"title"`
+		Year    int32    `json:"year"`
+		Runtime int32    `json:"runtime"`
+		Genres  []string `json:"genres"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	fmt.Fprintf(w, "%+v\n", input)
 }
 
 func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request) {
