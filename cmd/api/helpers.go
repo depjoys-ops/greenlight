@@ -20,7 +20,9 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 	return id, nil
 }
 
-func (app *application) writeJSON(w http.ResponseWriter, status int, data any, headers http.Header) error {
+type envelope map[string]any
+
+func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
 	/*  1) First way
 		Using json.Encoder in a single step creating and writing JSON.
 		But if JSON encoding fails you have to review headers and return an error response.
@@ -39,7 +41,7 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data any, h
 	*/
 
 	// 2) Second way
-	js, err := json.Marshal(data)
+	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
 	}
