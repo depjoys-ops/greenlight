@@ -10,27 +10,6 @@ import (
 )
 
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
-
-	/*	1) First way
-		json.Unmarshal() requires more memory (B/op) than json.Decoder, as well as being a tiny bit slower
-
-		var input struct {
-			Foo string `json:"foo"`
-		}
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			app.serverErrorResponse(w, r, err)
-			return
-		}
-		err = json.Unmarshal(body, &input)
-		if err != nil {
-			app.errorResponse(w, r, http.StatusBadRequest, err.Error())
-			return
-		}
-		fmt.Fprintf(w, "%+v\n", input)
-	*/
-
-	// 2) Second way
 	var input struct {
 		Title   string       `json:"title"`
 		Year    int32        `json:"year"`

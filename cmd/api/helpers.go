@@ -64,7 +64,27 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data envelo
 }
 
 func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any) error {
+	/*	1) First way
+		json.Unmarshal() requires more memory (B/op) than json.Decoder, as well as being a tiny bit slower
 
+		var input struct {
+			Foo string `json:"foo"`
+		}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+		err = json.Unmarshal(body, &input)
+		if err != nil {
+			app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+			return
+		}
+		fmt.Fprintf(w, "%+v\n", input)
+	*/
+
+	// 2) Second way
+	// Using json.Decoder which is more memory efficient and allows for streaming JSON decoding.
 	r.Body = http.MaxBytesReader(w, r.Body, 1_048_576) // 1 MB limit
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
