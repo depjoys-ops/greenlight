@@ -9,7 +9,12 @@ import (
 
 // for i in {1..6}; do curl http://localhost:4000/v1/healthcheck; done
 func (app *application) rateLimit(next http.Handler) http.Handler {
-	limiter := rate.NewLimiter(2, 4)
+
+	if !app.config.limiter.enabled {
+		return next
+	}
+
+	limiter := rate.NewLimiter(rate.Limit(app.config.limiter.rps), app.config.limiter.burst)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !limiter.Allow() {
