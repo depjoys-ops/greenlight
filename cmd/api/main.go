@@ -97,6 +97,7 @@ func main() {
 		logger: logger,
 		models: data.NewModels(db),
 		mailer: mailer,
+		wg:     &sync.WaitGroup{},
 	}
 
 	err = app.serve()
