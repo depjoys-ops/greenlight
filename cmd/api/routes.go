@@ -18,6 +18,9 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", app.showMovieHandler)
 	router.HandlerFunc(http.MethodPatch, "/v1/movies/:id", app.updateMovieHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/movies/:id", app.deleteMovieHandler)
+	// $ BODY='{"name": "Alice Smith", "email": "alice@example.com", "password": "pa55word"}'
+	// $ curl -i -d "$BODY" localhost:4000/v1/users
+	router.HandlerFunc(http.MethodPost, "/v1/users", app.registerUserHandler)
 
 	return app.recoverPanic(app.rateLimit(router))
 }
