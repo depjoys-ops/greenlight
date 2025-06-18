@@ -22,9 +22,14 @@ func (app *application) routes() http.Handler {
 	// $ curl -i -d "$BODY" localhost:4000/v1/users
 	router.HandlerFunc(http.MethodPost, "/v1/users", app.registerUserHandler)
 
-	// curl -X PUT -d '{"token": "invalid"}' localhost:4000/v1/users/activated
-	// curl -X PUT -d '{"token": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}' localhost:4000/v1/users/activated
+	// $ curl -X PUT -d '{"token": "invalid"}' localhost:4000/v1/users/activated
+	// $ curl -X PUT -d '{"token": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}' localhost:4000/v1/users/activated
 	router.HandlerFunc(http.MethodPut, "/v1/users/activated", app.activateUserHandler)
 
-	return app.recoverPanic(app.rateLimit(router))
+	// $ curl -d '{"email": "alice@example.com", "password": "pa55word"}' localhost:4000/v1/tokens/authentication
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationTokenHandler)
+	// $ curl -H "Authorization: Bearer ZIRXR4SAAUY6DOISEOTUI4L7CS" localhost:4000/v1/healthcheck
+	// $ curl -i -H "Authorization: INVALID" localhost:4000/v1/healthcheck
+
+	return app.recoverPanic(app.rateLimit(app.authenticate(router)))
 }
