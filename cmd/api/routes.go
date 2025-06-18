@@ -22,5 +22,9 @@ func (app *application) routes() http.Handler {
 	// $ curl -i -d "$BODY" localhost:4000/v1/users
 	router.HandlerFunc(http.MethodPost, "/v1/users", app.registerUserHandler)
 
+	// curl -X PUT -d '{"token": "invalid"}' localhost:4000/v1/users/activated
+	// curl -X PUT -d '{"token": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}' localhost:4000/v1/users/activated
+	router.HandlerFunc(http.MethodPut, "/v1/users/activated", app.activateUserHandler)
+
 	return app.recoverPanic(app.rateLimit(router))
 }
