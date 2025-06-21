@@ -1,6 +1,7 @@
 package main
 
 import (
+	"expvar"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -33,5 +34,7 @@ func (app *application) routes() http.Handler {
 	// $ curl -H "Authorization: Bearer ZIRXR4SAAUY6DOISEOTUI4L7CS" localhost:4000/v1/healthcheck
 	// $ curl -i -H "Authorization: INVALID" localhost:4000/v1/healthcheck
 
-	return app.recoverPanic(app.enableCORS(app.rateLimit(app.authenticate(router))))
+	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
+
+	return app.metrics(app.recoverPanic(app.enableCORS(app.rateLimit(app.authenticate(router)))))
 }
