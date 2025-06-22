@@ -35,6 +35,7 @@ func (app *application) routes() http.Handler {
 	// $ curl -H "Authorization: Bearer ZIRXR4SAAUY6DOISEOTUI4L7CS" localhost:4000/v1/healthcheck
 	// $ curl -i -H "Authorization: INVALID" localhost:4000/v1/healthcheck
 
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/activation", app.createActivationTokenHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/password-reset", app.createPasswordResetTokenHandler)
 
 	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
