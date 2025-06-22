@@ -28,11 +28,14 @@ func (app *application) routes() http.Handler {
 	// $ curl -X PUT -d '{"token": "invalid"}' localhost:4000/v1/users/activated
 	// $ curl -X PUT -d '{"token": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}' localhost:4000/v1/users/activated
 	router.HandlerFunc(http.MethodPut, "/v1/users/activated", app.activateUserHandler)
+	router.HandlerFunc(http.MethodPut, "/v1/users/password", app.updateUserPasswordHandler)
 
 	// $ curl -d '{"email": "alice@example.com", "password": "pa55word"}' localhost:4000/v1/tokens/authentication
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationTokenHandler)
 	// $ curl -H "Authorization: Bearer ZIRXR4SAAUY6DOISEOTUI4L7CS" localhost:4000/v1/healthcheck
 	// $ curl -i -H "Authorization: INVALID" localhost:4000/v1/healthcheck
+
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/password-reset", app.createPasswordResetTokenHandler)
 
 	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
 
